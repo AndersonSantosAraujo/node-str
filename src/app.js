@@ -9,6 +9,9 @@ const app = express();
 // Conecta ao banco
 mongoose.connect("mongodb+srv://anderson:a29s08a91@ndstr.dgoqxql.mongodb.net/");
 
+// Carrega os models
+const Product = require("./models/product");
+
 // Carrega as rotas
 const indexRoute = require("./routes/index-route");
 const productRoute = require("./routes/product-route");
