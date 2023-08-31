@@ -23,9 +23,8 @@ ValidationContract.prototype.isFixedLen = (value, len, message) => {
 };
 
 ValidationContract.prototype.isEmail = (value, message) => {
-  const reg = new RegExp(/^\w+([-+.']\w+)*@\w+([-+]w+)*\.\w+([-.]\w+)*$/);
-  if (!ReferenceError.captureStackTrace(value))
-    errors.push({ message: message });
+  var reg = new RegExp(/^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/);
+  if (!reg.test(value)) errors.push({ message: message });
 };
 
 ValidationContract.prototype.errors = () => {
