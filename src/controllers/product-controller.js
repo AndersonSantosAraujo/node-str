@@ -3,11 +3,12 @@
 const mongoose = require("mongoose");
 const Product = mongoose.model("Product");
 const ValidationContract = require("../validators/fluent-validator");
+const repository = require("../repositories/product-repository");
 
 // Lista Produtos
 exports.get = (_, res) => {
-  // Só traz produtos ativos (filtro) e só retorna os campos "title price slug"
-  Product.find({ active: true }, "title price slug")
+  repository
+    .get()
     .then((data) => {
       res.status(201).send(data);
     })
@@ -18,10 +19,8 @@ exports.get = (_, res) => {
 
 // Retorna Um Produto pelo Slug
 exports.getBySlug = (req, res) => {
-  Product.findOne(
-    { slug: req.params.slug, active: true },
-    "title description price slug tags",
-  )
+  repository
+    .getBySlug(req.params.slug)
     .then((data) => {
       res.status(201).send(data);
     })
@@ -32,7 +31,8 @@ exports.getBySlug = (req, res) => {
 
 // Retorna Um Produto pelo ID
 exports.getById = (req, res) => {
-  Product.findById(req.params.id)
+  repository
+    .getById(req.params.id)
     .then((data) => {
       res.status(201).send(data);
     })
@@ -43,10 +43,8 @@ exports.getById = (req, res) => {
 
 // Lista Produtos pela Tag
 exports.getByTag = (req, res) => {
-  Product.find(
-    { tags: req.params.tag, active: true },
-    "title description price slug tags",
-  )
+  repository
+    .getByTag(req.params.tag)
     .then((data) => {
       res.status(201).send(data);
     })
@@ -57,11 +55,6 @@ exports.getByTag = (req, res) => {
 
 // Cadastra Produto
 exports.post = (req, res) => {
-  // Ou assim:
-  // const product = new Product();
-  // product.title = req.body.title;
-  // product.slug = req.body.slug;
-  // ...
   let contract = new ValidationContract();
   contract.hasMinLen(
     req.body.title,
@@ -85,9 +78,8 @@ exports.post = (req, res) => {
     return;
   }
 
-  const product = new Product(req.body);
-  product
-    .save()
+  repository
+    .create(req.body)
     .then((x) => {
       res.status(201).send({ message: "Produto cadastrado com sucesso!" });
     })
@@ -98,17 +90,10 @@ exports.post = (req, res) => {
     });
 };
 
+// Altera Produto
 exports.put = (req, res) => {
-  // const id = req.params.id;
-  // res.status(201).send({ id: id, item: req.body });
-  Product.findByIdAndUpdate(req.params.id, {
-    $set: {
-      title: req.body.title,
-      description: req.body.description,
-      price: req.body.price,
-      slug: req.body.slug,
-    },
-  })
+  repository
+    .update(req.params.id, req.body)
     .then((x) => {
       res.status(200).send({ message: "Produto atualizado com sucesso!" });
     })
@@ -119,9 +104,10 @@ exports.put = (req, res) => {
     });
 };
 
+// Deleta Produto
 exports.delete = (req, res) => {
-  // res.status(200).send(req.body);
-  Product.findOneAndRemove(req.body.id)
+  repository
+    .delete(req.body.id)
     .then((x) => {
       res.status(200).send({ message: "Produto removido com sucesso!" });
     })
