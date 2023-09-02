@@ -1,5 +1,6 @@
 "use strict";
 
+require("dotenv").config();
 const ValidationContract = require("../validators/fluent-validator");
 const repository = require("../repositories/customer-repository");
 const md5 = require("md5");
@@ -31,14 +32,14 @@ exports.post = async (req, res) => {
     await repository.create({
       name: req.body.name,
       email: req.body.email,
-      password: md5(req.body.password + global.SALT_KEY),
+      password: md5(req.body.password + process.env.SALT_KEY),
       roles: ["user"],
     });
 
     emailService.send(
       req.body.email,
       "Bem-Vindo ao Node Store",
-      global.EMAIL_TMPL.replace("{0}", req.body.name),
+      `Olá, <strong>${req.body.name}</strong>, seja bem-vindo à Node Store`,
     );
 
     res.status(201).send({ message: "Cliente cadastrado com sucesso!" });
@@ -52,7 +53,7 @@ exports.authenticate = async (req, res) => {
   try {
     const customer = await repository.authenticate({
       email: req.body.email,
-      password: md5(req.body.password + global.SALT_KEY),
+      password: md5(req.body.password + process.env.SALT_KEY),
     });
 
     if (!customer) {
