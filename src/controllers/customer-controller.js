@@ -32,6 +32,7 @@ exports.post = async (req, res) => {
       name: req.body.name,
       email: req.body.email,
       password: md5(req.body.password + global.SALT_KEY),
+      roles: ["user"],
     });
 
     emailService.send(
@@ -63,6 +64,7 @@ exports.authenticate = async (req, res) => {
       id: customer.id,
       email: customer.email,
       name: customer.name,
+      roles: customer.roles,
     });
 
     res.status(201).send({
@@ -78,11 +80,11 @@ exports.authenticate = async (req, res) => {
 exports.refreshToken = async (req, res) => {
   try {
     // Recupera o Token
-    const token =
+    const token_ =
       req.body.token || req.query.token || req.headers["x-access-token"];
 
     // Decodifica o Token
-    const data = await authService.decodeToken(token);
+    const data = await authService.decodeToken(token_);
 
     const customer = await repository.getById(data.id);
 
@@ -91,10 +93,11 @@ exports.refreshToken = async (req, res) => {
       return;
     }
 
-    const tokenData = await authService.generateToken({
+    const token = await authService.generateToken({
       id: customer.id,
       email: customer.email,
       name: customer.name,
+      roles: customer.roles,
     });
 
     res.status(201).send({
