@@ -2,14 +2,17 @@ const mongoose = require("mongoose");
 const Product = mongoose.model("Product");
 
 exports.get = async () => {
-  const res = await Product.find({ active: true }, "title price slug");
+  const res = await Product.find(
+    { active: true },
+    "title description price slug tags image",
+  );
   return res;
 };
 
 exports.getBySlug = async (slug) => {
   const res = await Product.findOne(
     { slug: slug, active: true },
-    "title description price slug tags",
+    "title description price slug tags image",
   );
   return res;
 };
@@ -22,7 +25,7 @@ exports.getById = async (id) => {
 exports.getByTag = async (tag) => {
   const res = Product.find(
     { tags: tag, active: true },
-    "title description price slug tags",
+    "title description price slug tags image",
   );
   return res;
 };

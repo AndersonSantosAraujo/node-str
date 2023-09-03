@@ -4,7 +4,7 @@ require("dotenv").config();
 const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
-const config = require("./config");
+// const config = require("./src/config");
 
 const app = express();
 
@@ -12,15 +12,15 @@ const app = express();
 mongoose.connect(process.env.MONGODB_CONNECTION_STRING);
 
 // Carrega os models
-const Product = require("./models/product");
-const Customer = require("./models/customer");
-const Order = require("./models/order");
+require("./src/models/product");
+require("./src/models/customer");
+require("./src/models/order");
 
 // Carrega as rotas
-const indexRoute = require("./routes/index-route");
-const productRoute = require("./routes/product-route");
-const customerRoute = require("./routes/customer-route");
-const orderRoute = require("./routes/order-route");
+const indexRoute = require("./src/routes/index-route");
+const productRoute = require("./src/routes/product-route");
+const customerRoute = require("./src/routes/customer-route");
+const orderRoute = require("./src/routes/order-route");
 
 app.use(
   bodyParser.json({

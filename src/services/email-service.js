@@ -1,7 +1,7 @@
 "use strict";
 
 require("dotenv").config();
-const config = require("../config");
+// const config = require("../config");
 const sendgrid = require("@sendgrid/mail");
 
 sendgrid.setApiKey(process.env.SENDGRID_KEY);
