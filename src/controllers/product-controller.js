@@ -5,9 +5,9 @@ const repository = require("../repositories/product-repository");
 const uploadService = require("../services/upload-service");
 
 // Lista Produtos
-exports.get = async (_, res) => {
+exports.get = async (req, res) => {
   try {
-    const data = await repository.get();
+    const data = await repository.get(req.query);
     res.status(200).send(data);
   } catch (e) {
     res.status(500).send({ message: "Falha ao processar sua requisição" });
@@ -37,7 +37,7 @@ exports.getById = async (req, res) => {
 // Lista Produtos pela Tag
 exports.getByTag = async (req, res) => {
   try {
-    const data = await repository.getByTag(req.params.tag);
+    const data = await repository.getByTag(req.query, req.params.tag);
     res.status(200).send(data);
   } catch (e) {
     res.status(500).send({ message: "Falha ao processar sua requisição" });

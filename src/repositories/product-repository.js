@@ -1,12 +1,25 @@
 const mongoose = require("mongoose");
 const Product = mongoose.model("Product");
 
-exports.get = async () => {
+exports.get = async (query) => {
+  const page = Number(query.page) - 1 || 0;
+  const limit = Number(query.limit) || 5;
+
   const res = await Product.find(
     { active: true },
     "title description price slug tags image",
-  );
-  return res;
+  )
+    .skip(page * limit)
+    .limit(limit);
+
+  const total = await Product.countDocuments({ active: true });
+
+  return {
+    total,
+    page: page + 1,
+    limit: limit,
+    products: res,
+  };
 };
 
 exports.getBySlug = async (slug) => {
@@ -22,12 +35,25 @@ exports.getById = async (id) => {
   return res;
 };
 
-exports.getByTag = async (tag) => {
-  const res = Product.find(
+exports.getByTag = async (query, tag) => {
+  const page = Number(query.page) - 1 || 0;
+  const limit = Number(query.limit) || 5;
+
+  const res = await Product.find(
     { tags: tag, active: true },
     "title description price slug tags image",
-  );
-  return res;
+  )
+    .skip(page * limit)
+    .limit(limit);
+
+  const total = await Product.countDocuments({ tags: tag, active: true });
+
+  return {
+    total,
+    page: page + 1,
+    limit: limit,
+    products: res,
+  };
 };
 
 exports.create = async (data) => {
